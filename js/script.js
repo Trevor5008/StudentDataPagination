@@ -4,7 +4,12 @@ FSJS Project 2 - Data Pagination and Filtering
 */
 
 const header = document.querySelector('header');
+const studentList = document.querySelector('ul.student-list');
 const linkList = document.querySelector('ul.link-list');
+const studentsPerPage = 9;
+let studentData = data;
+// initial load on page 1
+let currentPage = 1;
 
 const addSearchBar = () => {
    let searchBar = document.createElement('div');
@@ -19,9 +24,8 @@ const addSearchBar = () => {
 };
 
 const showPage = (list, page) => {
-   const startIdx = (page * 9) - 9;
-   const endIdx = page * 9;
-   const studentList = document.querySelector('ul.student-list');
+   const startIdx = (page * studentsPerPage) - studentsPerPage;
+   const endIdx = page * studentsPerPage;
    studentList.innerHTML = '';
    let html = '';
    // display message if zero search results
@@ -29,16 +33,17 @@ const showPage = (list, page) => {
       html += `<h2 style="text-align: center">Sorry, no matching results</h2>`;
    } else {
       for (let i = startIdx; i < list.length; i++) {
+         let student = list[i];
          if (i >= startIdx && i < endIdx) {
             html += `  
                <li class="student-item cf">
                   <div class="student-details">
-                     <img class="avatar" src="${list[i].picture.large}" alt="Profile Picture">
-                     <h3>${list[i].name.first} ${list[i].name.last}</h3>
-                     <span class="email">${list[i].email}</span>
+                     <img class="avatar" src="${student.picture.large}" alt="Profile Picture">
+                     <h3>${student.name.first} ${student.name.last}</h3>
+                     <span class="email">${student.email}</span>
                   </div>
                   <div class="joined-details">
-                     <span class="date">Joined ${list[i].registered.date}</span>
+                     <span class="date">Joined ${student.registered.date}</span>
                   </div>
                </li>`;
          }
@@ -62,26 +67,36 @@ const addPagination = (list) => {
    linkList.innerHTML = html;
 };
 
-// initial load on page 1
-let currentPage = 1;
-
 // Call functions
 addSearchBar();
 showPage(data, currentPage);
 addPagination(data);
 
-const pageBtns = linkList.querySelectorAll('li button');
 const searchFld = document.getElementById('search');
 const searchBtn = searchFld.nextElementSibling;
+let pageBtns = linkList.querySelectorAll('li button');
 
 searchBtn.addEventListener('click', () => {
    const searchTerm = searchFld.value.toUpperCase();
    searchFld.value = '';
    // if search field is empty, show all data
-   let filterData = searchTerm !== '' ? data.filter(student => student.name.first.toUpperCase() === searchTerm) : data;
-
-   showPage(filterData, 1);
-   addPagination(filterData);
+   studentData = searchTerm !== '' ? data.filter(student => student.name.first.toUpperCase() === searchTerm) : data;
+   currentPage = 1;
+   showPage(studentData, currentPage);
+   addPagination(studentData);
+   pageBtns = linkList.querySelectorAll('li button');
+   for (let i = 0; i < pageBtns.length; i++) {
+      pageBtns[i].addEventListener('click', (e) => {
+         const button = e.target;
+         // set current page to selected button value
+         currentPage = button.innerText;
+         // remove active class from previous
+         document.querySelector('button.active').className = '';
+         showPage(studentData, currentPage);
+         // set active class on current target
+         button.className = 'active';
+      });
+   };
 });
 
 // attach event handler to each page button
@@ -92,8 +107,8 @@ for (let i = 0; i < pageBtns.length; i++) {
       currentPage = button.innerText;
       // remove active class from previous
       document.querySelector('button.active').className = '';
-      showPage(data, currentPage);
+      showPage(studentData, currentPage);
       // set active class on current target
       button.className = 'active';
    });
-}
+};
