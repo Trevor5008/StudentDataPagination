@@ -74,7 +74,6 @@ addPagination(data);
 
 const searchFld = document.getElementById('search');
 const searchBtn = searchFld.nextElementSibling;
-let pageBtns = linkList.querySelectorAll('li button');
 
 searchBtn.addEventListener('click', () => {
    const searchTerm = searchFld.value.toUpperCase();
@@ -84,31 +83,15 @@ searchBtn.addEventListener('click', () => {
    currentPage = 1;
    showPage(studentData, currentPage);
    addPagination(studentData);
-   pageBtns = linkList.querySelectorAll('li button');
-   for (let i = 0; i < pageBtns.length; i++) {
-      pageBtns[i].addEventListener('click', (e) => {
-         const button = e.target;
-         // set current page to selected button value
-         currentPage = button.innerText;
-         // remove active class from previous
-         document.querySelector('button.active').className = '';
-         showPage(studentData, currentPage);
-         // set active class on current target
-         button.className = 'active';
-      });
-   };
 });
 
-// attach event handler to each page button
-for (let i = 0; i < pageBtns.length; i++) {
-   pageBtns[i].addEventListener('click', (e) => {
-      const button = e.target;
-      // set current page to selected button value
-      currentPage = button.innerText;
-      // remove active class from previous
-      document.querySelector('button.active').className = '';
-      showPage(studentData, currentPage);
-      // set active class on current target
-      button.className = 'active';
-   });
-};
+linkList.addEventListener('click', (e) => {
+   const button = e.target;
+   // set current page to selected button value
+   currentPage = button.innerText;
+   // remove active class from previous
+   document.querySelector('button.active').className = '';
+   showPage(studentData, currentPage);
+   // set active class on current target
+   button.className = 'active';
+});
