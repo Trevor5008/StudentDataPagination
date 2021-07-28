@@ -75,23 +75,28 @@ addPagination(data);
 const searchFld = document.getElementById('search');
 const searchBtn = searchFld.nextElementSibling;
 
-searchBtn.addEventListener('click', () => {
-   const searchTerm = searchFld.value.toUpperCase();
-   searchFld.value = '';
+searchFld.addEventListener('keyup', () => {
+   let searchTerm = searchFld.value.toUpperCase();
+   searchBtn.onclick = () => {;
+      searchFld.value = '';
+   }
    // if search field is empty, show all data
-   studentData = searchTerm !== '' ? data.filter(student => student.name.first.toUpperCase() === searchTerm) : data;
+   studentData = searchTerm !== '' ? 
+      data.filter(student => student.name.first.toUpperCase().includes(searchTerm)) : data;
    currentPage = 1;
    showPage(studentData, currentPage);
    addPagination(studentData);
 });
 
 linkList.addEventListener('click', (e) => {
-   const button = e.target;
-   // set current page to selected button value
-   currentPage = button.innerText;
-   // remove active class from previous
-   document.querySelector('button.active').className = '';
-   showPage(studentData, currentPage);
-   // set active class on current target
-   button.className = 'active';
+   if (e.target.tagName === 'BUTTON') {
+      const button = e.target;
+      // set current page to selected button value
+      currentPage = button.innerText;
+      // remove active class from previous
+      document.querySelector('button.active').className = '';
+      showPage(studentData, currentPage);
+      // set active class on current target
+      button.className = 'active';
+   }
 });
